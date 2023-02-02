@@ -89,7 +89,7 @@ public abstract class App {
         imGuiLayer.destroyImGui();
     }
 
-    private void init(String title, boolean fullscreen) {
+    public App init(String title, boolean fullscreen) {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -146,6 +146,7 @@ public abstract class App {
 
         // Make the window visible
         glfwShowWindow(window);
+        return this;
     }
 
     private void setCallbacks(ImGuiLayer imGuiLayer) {
