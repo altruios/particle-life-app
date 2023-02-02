@@ -39,7 +39,8 @@ import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 public class Main extends App {
 
     public static void main(String[] args) {
-        new Main().launch("Particle Life Simulator", true);
+        const M = new Main().init("Particle Life Simulator", true);
+        M.launch("Particle Life Simulator", true);
     }
 
     // data
