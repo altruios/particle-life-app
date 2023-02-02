@@ -36,7 +36,7 @@ public abstract class App {
     public void launch(String title, boolean fullscreen) {
         System.out.println("Using LWJGL " + Version.getVersion());
 
-        init(title, fullscreen);
+        //init(title, fullscreen); called from main
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
