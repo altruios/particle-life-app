@@ -36,7 +36,7 @@ public abstract class App {
     public void launch(String title, boolean fullscreen) {
         System.out.println("Using LWJGL " + Version.getVersion());
 
-        //init(title, fullscreen); called from main
+        init(title, fullscreen);
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -89,7 +89,7 @@ public abstract class App {
         imGuiLayer.destroyImGui();
     }
 
-    public App init(String title, boolean fullscreen) {
+    public void init(String title, boolean fullscreen) {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -146,7 +146,6 @@ public abstract class App {
 
         // Make the window visible
         glfwShowWindow(window);
-        return this;
     }
 
     private void setCallbacks(ImGuiLayer imGuiLayer) {
