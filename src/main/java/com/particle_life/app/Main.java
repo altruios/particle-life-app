@@ -17,6 +17,7 @@ import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiSliderFlags;
 import imgui.flag.ImGuiWindowFlags;
+import imgui.internal.flag.ImGuiItemFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImFloat;
 import imgui.type.ImInt;
@@ -511,17 +512,20 @@ public class Main extends App {
                     }
 
                     {// FRICTION
-                        double secondPart = 10.0;
-                        double frictionVal = Math.pow(settings.friction, 1.0 / secondPart);
-                        float[] frictionSliderValue = new float[]{(float) frictionVal};
-                        if (ImGui.sliderFloat("friction", frictionSliderValue, 0.0f, 1.0f, String.format("%.3f / %.1fs", frictionVal, 1.0 / secondPart))) {
-                            final double newFriction = Math.pow(frictionSliderValue[0], secondPart);
-                            loop.enqueue(() -> physics.settings.friction = newFriction);
+                        float[] frictionSliderValue = new float[]{(float) settings.velocityHalfLife};
+                        if (ImGui.sliderFloat("velocity half life",
+                                frictionSliderValue, 0.0f, 1.0f,
+                                String.format("%4.0f ms", settings.velocityHalfLife * 1000),
+                                ImGuiSliderFlags.Logarithmic)) {
+                            final double newVelocityHalfLife = frictionSliderValue[0];
+                            loop.enqueue(() -> physics.settings.velocityHalfLife = newVelocityHalfLife);
                         }
+                        ImGui.sameLine();
+                        ImGuiUtils.helpMarker("The time after which half the velocity of a particle should be lost due to friction.");
                     }
 
                     float[] forceFactorSliderValue = new float[]{(float) settings.force};
-                    if (ImGui.sliderFloat("force", forceFactorSliderValue, 0.0f, 5.0f)) {
+                    if (ImGui.sliderFloat("force scaling", forceFactorSliderValue, 0.0f, 10.0f)) {
                         final float newForceFactor = forceFactorSliderValue[0];
                         loop.enqueue(() -> physics.settings.force = newForceFactor);
                     }
@@ -536,14 +540,15 @@ public class Main extends App {
                             loop.enqueue(() -> physics.preferredNumberOfThreads = newThreadNumber);
                         }
 
+                        if (ImGui.checkbox("auto time", autoDt)) autoDt ^= true;
+                        ImGui.sameLine();
+                        ImGuiUtils.helpMarker("If ticked, the time step of the physics computation will be chosen automatically based on the real passed time.");
+                        if (autoDt) ImGui.beginDisabled();
                         float[] dtSliderValue = new float[]{(float) fallbackDt};
                         if (ImGui.sliderFloat("##dt", dtSliderValue, 0.0f, 0.1f, String.format("%4.1f ms", fallbackDt * 1000.0), ImGuiSliderFlags.Logarithmic)) {
                             fallbackDt = dtSliderValue[0];
                         }
-                        ImGui.sameLine();
-                        if (ImGui.checkbox("fixed step", !autoDt)) {
-                            autoDt ^= true;
-                        }
+                        if (autoDt) ImGui.endDisabled();
                     }
                 }
 
@@ -562,9 +567,11 @@ public class Main extends App {
                     renderCombo("palette [l]", palettes);
 
                     float[] particleSizeSliderValue = new float[]{particleSize};
-                    if (ImGui.sliderFloat("particle size", particleSizeSliderValue, 0.1f, 10f)) {
+                    if (ImGui.sliderFloat("particle size [ctrl+scroll]", particleSizeSliderValue, 0.1f, 10f)) {
                         particleSize = particleSizeSliderValue[0];
                     }
+                    ImGui.sameLine();
+                    ImGuiUtils.helpMarker("How large the particles are displayed.");
 
                     if (ImGui.checkbox("clear screen [c]", traces)) {
                         traces ^= true;
@@ -576,12 +583,12 @@ public class Main extends App {
                         renderCombo("##cursoraction", cursorActions);
                         renderCombo("##cursor", cursors);
                         ImGui.sameLine();
-                        if (ImGui.checkbox("show", renderer.drawCursor)) {
+                        if (ImGui.checkbox("show cursor", renderer.drawCursor)) {
                             renderer.drawCursor ^= true;
                         }
                         // cursor size slider
                         float[] cursorSizeSliderValue = new float[]{(float) cursorSize};
-                        if (ImGui.sliderFloat("cursor size", cursorSizeSliderValue,
+                        if (ImGui.sliderFloat("cursor size [shift+scroll]", cursorSizeSliderValue,
                                 0.001f, 1.000f,
                                 String.format("%.3f", cursorSize),
                                 ImGuiSliderFlags.Logarithmic)) {

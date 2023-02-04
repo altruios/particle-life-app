@@ -9,6 +9,12 @@ plugins {
 
 }
 
+application {
+    if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
+        applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+    }
+}
+
 launch4j {
     icon = "${projectDir}/favicon.ico"
     mainClassName = 'com.particle_life.app.Main'
@@ -91,7 +97,7 @@ repositories {
 
 dependencies {
 
-    implementation "com.github.tom-mohr:particle-life:v0.1.1"
+    implementation "com.github.tom-mohr:particle-life:v0.2.0"
 
     // jOOR
     implementation 'org.jooq:joor:0.9.14'
